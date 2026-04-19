@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import Header from "@/app/components/Header";
 import { useAuth } from "@/app/context/AuthContext";
 
@@ -355,18 +356,42 @@ export default function Home() {
             </div>
 
             {[
-              { title: "פלטפורמה", links: ["מתווכים", "נכסים", "השוואת מתווכים", "ביקורות"] },
-              { title: "חברה", links: ["אודות", "קריירה", "בלוג", "פרסום"] },
-              { title: "תמיכה", links: ["מרכז עזרה", "צרו קשר", "תנאי שימוש", "פרטיות"] },
+              {
+                title: "פלטפורמה",
+                links: [
+                  { label: "מתווכים", href: "/agents" },
+                  { label: "תמחור", href: "/pricing" },
+                  { label: "אודות", href: "/about" },
+                  { label: "הצטרפו כמתווך", href: "/pricing" },
+                ],
+              },
+              {
+                title: "חברה",
+                links: [
+                  { label: "אודות נדלניסט", href: "/about" },
+                  { label: "תמחור מסלולים", href: "/pricing" },
+                  { label: "הרשמה", href: "/register" },
+                  { label: "כניסה", href: "/login" },
+                ],
+              },
+              {
+                title: "משפטי ותמיכה",
+                links: [
+                  { label: "תנאי שימוש", href: "/terms" },
+                  { label: "מדיניות פרטיות", href: "/privacy" },
+                  { label: "מדיניות ביטול", href: "/cancellation" },
+                  { label: "צרו קשר", href: "mailto:support@nadlanist.co.il" },
+                ],
+              },
             ].map((col) => (
               <div key={col.title}>
                 <h4 className="text-white font-semibold text-sm mb-4">{col.title}</h4>
                 <ul className="space-y-2.5">
                   {col.links.map((link) => (
-                    <li key={link}>
-                      <a href="#" className="text-gray-500 text-sm hover:text-[#C9A84C] transition-colors">
-                        {link}
-                      </a>
+                    <li key={link.label}>
+                      <Link href={link.href} className="text-gray-500 text-sm hover:text-[#C9A84C] transition-colors">
+                        {link.label}
+                      </Link>
                     </li>
                   ))}
                 </ul>
