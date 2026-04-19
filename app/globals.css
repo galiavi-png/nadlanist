@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C96A;
+  --gold-pale: #F5E6B8;
+  --dark: #0D0D0D;
+  --dark-card: #161616;
+  --dark-border: #2A2A2A;
+}
+
+@theme inline {
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-gold-pale: var(--gold-pale);
+  --color-dark: var(--dark);
+  --color-dark-card: var(--dark-card);
+  --color-dark-border: var(--dark-border);
+  --font-sans: var(--font-geist-sans);
+}
+
+body {
+  background: var(--dark);
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  direction: rtl;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.gold-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--gold) 0%,
+    var(--gold-light) 40%,
+    var(--gold-pale) 50%,
+    var(--gold-light) 60%,
+    var(--gold) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(201, 168, 76, 0.15);
+}
+
+.search-input::placeholder {
+  color: #666;
+}
