@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { ALL_AGENTS } from "@/app/lib/agents";
-import type { DealType, Agent } from "@/app/lib/agents";
+import type { DealType, PropertyType, Agent } from "@/app/lib/agents";
 
 type SortKey = "rating" | "reviews" | "experience";
 
@@ -11,8 +11,12 @@ const CITIES = ["הכל", "תל אביב", "ירושלים", "הרצליה", "ר
 const DEAL_TYPES: { value: DealType | "all"; label: string }[] = [
   { value: "all", label: "הכל" },
   { value: "sale", label: "מכירה" },
+  { value: "buy", label: "קנייה" },
   { value: "rent", label: "השכרה" },
-  { value: "commercial", label: "מסחרי" },
+  { value: "commercial", label: "השכרת נכס מסחרי" },
+];
+const PROPERTY_TYPES: (PropertyType | "הכל")[] = [
+  "הכל", "דירה", "בית פרטי", "פנטהאוס", "דירת גן", "נחלה", "קרקע", "מחסן", "מפעל", "משרד", "חנות",
 ];
 
 function StarRating({ rating }: { rating: number }) {
@@ -28,7 +32,7 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 function AgentCard({ agent }: { agent: Agent }) {
-  const dealLabels: Record<DealType, string> = { sale: "מכירה", rent: "השכרה", commercial: "מסחרי" };
+  const dealLabels: Record<DealType, string> = { sale: "מכירה", buy: "קנייה", rent: "השכרה", commercial: "השכרת נכס מסחרי" };
 
   return (
     <div className="group rounded-2xl border border-[#2A2A2A] bg-[#161616] p-5 flex gap-5 hover:border-[#C9A84C]/30 transition-all duration-300 hover:shadow-[0_8px_40px_rgba(201,168,76,0.08)]">
@@ -118,6 +122,7 @@ export default function AgentsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCity, setSelectedCity] = useState("הכל");
   const [selectedDeal, setSelectedDeal] = useState<DealType | "all">("all");
+  const [selectedPropertyType, setSelectedPropertyType] = useState<PropertyType | "הכל">("הכל");
   const [minRating, setMinRating] = useState(0);
   const [minPrice, setMinPrice] = useState(0);
   const [sortBy, setSortBy] = useState<SortKey>("rating");
@@ -130,6 +135,7 @@ export default function AgentsPage() {
         if (searchQuery && !a.name.includes(searchQuery) && !a.area.includes(searchQuery) && !a.specialty.includes(searchQuery)) return false;
         if (selectedCity !== "הכל" && a.city !== selectedCity) return false;
         if (selectedDeal !== "all" && !a.dealTypes.includes(selectedDeal)) return false;
+        if (selectedPropertyType !== "הכל" && !a.propertyTypes.includes(selectedPropertyType)) return false;
         if (a.rating < minRating) return false;
         if (a.priceMin < minPrice) return false;
         if (verifiedOnly && !a.verified) return false;
@@ -140,18 +146,19 @@ export default function AgentsPage() {
         if (sortBy === "reviews") return b.reviews - a.reviews;
         return b.experience - a.experience;
       });
-  }, [searchQuery, selectedCity, selectedDeal, minRating, minPrice, sortBy, verifiedOnly]);
+  }, [searchQuery, selectedCity, selectedDeal, selectedPropertyType, minRating, minPrice, sortBy, verifiedOnly]);
 
   const resetFilters = () => {
     setSearchQuery("");
     setSelectedCity("הכל");
     setSelectedDeal("all");
+    setSelectedPropertyType("הכל");
     setMinRating(0);
     setMinPrice(0);
     setVerifiedOnly(false);
   };
 
-  const hasActiveFilters = selectedCity !== "הכל" || selectedDeal !== "all" || minRating > 0 || minPrice > 0 || verifiedOnly;
+  const hasActiveFilters = selectedCity !== "הכל" || selectedDeal !== "all" || selectedPropertyType !== "הכל" || minRating > 0 || minPrice > 0 || verifiedOnly;
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0D0D0D]">
@@ -167,10 +174,9 @@ export default function AgentsPage() {
 
           <nav className="hidden md:flex items-center gap-8 text-sm">
             {[
-              { label: "מתווכים", href: "/agents" },
-              { label: "נכסים", href: "#" },
-              { label: "על הפלטפורמה", href: "#" },
-              { label: "בלוג", href: "#" },
+              { label: "מצא מתווך", href: "/agents" },
+              { label: "על הפלטפורמה", href: "/about" },
+              { label: "בלוג", href: "/blog" },
             ].map((item) => (
               <Link
                 key={item.label}
@@ -260,6 +266,25 @@ export default function AgentsPage() {
                   }`}
                 >
                   {city}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-[#2A2A2A] bg-[#161616] p-4">
+            <h2 className="text-white font-semibold text-sm mb-3">סוג נכס</h2>
+            <div className="flex flex-col gap-1.5">
+              {PROPERTY_TYPES.map((pt) => (
+                <button
+                  key={pt}
+                  onClick={() => setSelectedPropertyType(pt as PropertyType | "הכל")}
+                  className={`text-right px-3 py-2 rounded-lg text-sm transition-colors ${
+                    selectedPropertyType === pt
+                      ? "bg-[#C9A84C]/15 text-[#C9A84C] border border-[#C9A84C]/30"
+                      : "text-gray-400 hover:bg-[#2A2A2A] hover:text-white"
+                  }`}
+                >
+                  {pt}
                 </button>
               ))}
             </div>

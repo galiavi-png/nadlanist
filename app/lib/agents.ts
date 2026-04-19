@@ -1,4 +1,5 @@
-export type DealType = "sale" | "rent" | "commercial";
+export type DealType = "sale" | "buy" | "rent" | "commercial";
+export type PropertyType = "דירה" | "בית פרטי" | "פנטהאוס" | "דירת גן" | "נחלה" | "קרקע" | "מחסן" | "מפעל" | "משרד" | "חנות";
 
 export interface Review {
   id: number;
@@ -29,6 +30,7 @@ export interface Agent {
   specialty: string;
   tags: string[];
   dealTypes: DealType[];
+  propertyTypes: PropertyType[];
   rating: number;
   reviews: number;
   experience: number;
@@ -54,7 +56,8 @@ export const ALL_AGENTS: Agent[] = [
     area: "תל אביב והמרכז",
     specialty: "דירות יוקרה",
     tags: ["דירות יוקרה", "פנטהאוז", "דירות גן"],
-    dealTypes: ["sale", "rent"],
+    dealTypes: ["sale", "buy", "rent"],
+    propertyTypes: ["דירה", "פנטהאוס", "דירת גן"],
     rating: 4.9,
     reviews: 127,
     experience: 12,
@@ -160,7 +163,8 @@ export const ALL_AGENTS: Agent[] = [
     area: "הרצליה פיתוח",
     specialty: "נכסי פרימיום",
     tags: ["נכסי פרימיום", "מסחרי", "השקעות"],
-    dealTypes: ["sale", "commercial"],
+    dealTypes: ["sale", "buy", "commercial"],
+    propertyTypes: ["דירה", "פנטהאוס", "משרד", "חנות"],
     rating: 4.8,
     reviews: 98,
     experience: 9,
@@ -247,7 +251,8 @@ export const ALL_AGENTS: Agent[] = [
     area: "ירושלים",
     specialty: "נכסים היסטוריים",
     tags: ["נכסים היסטוריים", "בתי אבן", "שימור"],
-    dealTypes: ["sale"],
+    dealTypes: ["sale", "buy"],
+    propertyTypes: ["בית פרטי", "דירה"],
     rating: 5.0,
     reviews: 74,
     experience: 15,
@@ -335,6 +340,7 @@ export const ALL_AGENTS: Agent[] = [
     specialty: "דירות להשכרה",
     tags: ["השכרה", "דירות", "גוש דן"],
     dealTypes: ["rent"],
+    propertyTypes: ["דירה", "דירת גן"],
     rating: 4.6,
     reviews: 211,
     experience: 7,
@@ -400,7 +406,8 @@ export const ALL_AGENTS: Agent[] = [
     area: "חיפה והכרמל",
     specialty: "נדל\"ן מסחרי",
     tags: ["מסחרי", "משרדים", "תעשייה"],
-    dealTypes: ["commercial", "sale"],
+    dealTypes: ["commercial", "sale", "buy"],
+    propertyTypes: ["משרד", "חנות", "מחסן", "מפעל"],
     rating: 4.7,
     reviews: 56,
     experience: 10,
@@ -445,7 +452,8 @@ export const ALL_AGENTS: Agent[] = [
     area: "נתניה והשרון",
     specialty: "בתים פרטיים",
     tags: ["בתים פרטיים", "וילות", "השרון"],
-    dealTypes: ["sale", "rent"],
+    dealTypes: ["sale", "buy", "rent"],
+    propertyTypes: ["בית פרטי", "דירה", "נחלה"],
     rating: 4.5,
     reviews: 89,
     experience: 6,
@@ -490,7 +498,8 @@ export const ALL_AGENTS: Agent[] = [
     area: "יפו ונווה צדק",
     specialty: "נכסים בוטיק",
     tags: ["בוטיק", "נווה צדק", "יפו"],
-    dealTypes: ["sale", "rent"],
+    dealTypes: ["sale", "buy", "rent"],
+    propertyTypes: ["דירה", "דירת גן", "פנטהאוס"],
     rating: 4.9,
     reviews: 103,
     experience: 11,
@@ -554,7 +563,8 @@ export const ALL_AGENTS: Agent[] = [
     area: "הנגב",
     specialty: "השקעות נדל\"ן",
     tags: ["השקעות", "נגב", "תשואה"],
-    dealTypes: ["sale", "commercial"],
+    dealTypes: ["sale", "buy", "commercial"],
+    propertyTypes: ["קרקע", "דירה", "מחסן"],
     rating: 4.4,
     reviews: 44,
     experience: 8,
@@ -599,7 +609,8 @@ export const ALL_AGENTS: Agent[] = [
     area: "השרון הצפוני",
     specialty: "בתים ופנטהאוזים",
     tags: ["פנטהאוז", "בתים פרטיים", "השרון"],
-    dealTypes: ["sale"],
+    dealTypes: ["sale", "buy"],
+    propertyTypes: ["בית פרטי", "פנטהאוס", "דירה"],
     rating: 4.8,
     reviews: 67,
     experience: 13,

@@ -31,6 +31,15 @@ const SPECIALTIES = [
   "וילות ופנטהאוזים",
 ];
 
+const PROPERTY_TYPES_OPTIONS = [
+  "דירה", "בית פרטי", "פנטהאוס", "דירת גן", "נחלה",
+  "קרקע", "מחסן", "מפעל", "משרד", "חנות",
+];
+
+const DEAL_TYPES_OPTIONS = [
+  "מכירה", "קנייה", "השכרה", "השכרת נכס מסחרי",
+];
+
 type Step = 1 | 2 | 3;
 
 function PasswordStrength({ password }: { password: string }) {
@@ -80,6 +89,8 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
   const [specialty, setSpecialty] = useState("");
+  const [selectedPropertyTypes, setSelectedPropertyTypes] = useState<string[]>([]);
+  const [selectedDealTypes, setSelectedDealTypes] = useState<string[]>([]);
   const [agreeTerms, setAgreeTerms] = useState(false);
 
   function validateStep2() {
@@ -135,6 +146,8 @@ export default function RegisterPage() {
           phone: phone || "",
           areas: role === "agent" ? JSON.stringify(selectedAreas) : "",
           specialty: role === "agent" ? specialty : "",
+          property_types: role === "agent" ? JSON.stringify(selectedPropertyTypes) : "",
+          deal_types: role === "agent" ? JSON.stringify(selectedDealTypes) : "",
         },
       },
     });
@@ -165,6 +178,18 @@ export default function RegisterPage() {
       prev.includes(area) ? prev.filter((a) => a !== area) : [...prev, area]
     );
     setErrors((e) => ({ ...e, areas: "" }));
+  }
+
+  function togglePropertyType(pt: string) {
+    setSelectedPropertyTypes((prev) =>
+      prev.includes(pt) ? prev.filter((p) => p !== pt) : [...prev, pt]
+    );
+  }
+
+  function toggleDealType(dt: string) {
+    setSelectedDealTypes((prev) =>
+      prev.includes(dt) ? prev.filter((d) => d !== dt) : [...prev, dt]
+    );
   }
 
   const stepTitles: Record<Step, string> = {
@@ -480,6 +505,62 @@ export default function RegisterPage() {
                       {errors.specialty && <p className="text-red-400 text-xs mt-1">{errors.specialty}</p>}
                     </div>
 
+                    {/* Property types */}
+                    <div>
+                      <label className="block text-gray-400 text-xs mb-2">
+                        סוגי נכסים
+                        <span className="text-gray-600 mr-1">(ניתן לבחור מספר)</span>
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {PROPERTY_TYPES_OPTIONS.map((pt) => {
+                          const selected = selectedPropertyTypes.includes(pt);
+                          return (
+                            <button
+                              key={pt}
+                              type="button"
+                              onClick={() => togglePropertyType(pt)}
+                              className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
+                                selected
+                                  ? "border-blue-400 bg-blue-500/15 text-blue-300"
+                                  : "border-[#2A2A2A] text-gray-400 hover:border-gray-500"
+                              }`}
+                            >
+                              {selected && <span className="ml-1">✓</span>}
+                              {pt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Deal types */}
+                    <div>
+                      <label className="block text-gray-400 text-xs mb-2">
+                        סוגי עסקאות
+                        <span className="text-gray-600 mr-1">(ניתן לבחור מספר)</span>
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {DEAL_TYPES_OPTIONS.map((dt) => {
+                          const selected = selectedDealTypes.includes(dt);
+                          return (
+                            <button
+                              key={dt}
+                              type="button"
+                              onClick={() => toggleDealType(dt)}
+                              className={`px-3 py-1.5 rounded-full text-sm border transition-all ${
+                                selected
+                                  ? "border-[#C9A84C] bg-[#C9A84C]/15 text-[#C9A84C]"
+                                  : "border-[#2A2A2A] text-gray-400 hover:border-gray-500"
+                              }`}
+                            >
+                              {selected && <span className="ml-1">✓</span>}
+                              {dt}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                     <div className="h-px bg-[#2A2A2A]" />
                   </>
                 )}
@@ -494,6 +575,8 @@ export default function RegisterPage() {
                     { label: "סוג חשבון", value: role === "agent" ? "מתווך נדל\"ן" : "בעל נכס" },
                     ...(role === "agent" && specialty ? [{ label: "התמחות", value: specialty }] : []),
                     ...(role === "agent" && selectedAreas.length ? [{ label: "אזורים", value: selectedAreas.join("، ") }] : []),
+                    ...(role === "agent" && selectedPropertyTypes.length ? [{ label: "סוגי נכסים", value: selectedPropertyTypes.join("، ") }] : []),
+                    ...(role === "agent" && selectedDealTypes.length ? [{ label: "סוגי עסקאות", value: selectedDealTypes.join("، ") }] : []),
                   ].map((row) => (
                     <div key={row.label} className="flex justify-between text-sm">
                       <span className="text-gray-500">{row.label}</span>

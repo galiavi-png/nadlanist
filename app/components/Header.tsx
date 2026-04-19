@@ -7,7 +7,7 @@ import { useAuth } from "@/app/context/AuthContext";
 
 const NAV_LINKS = [
   { label: "מתווכים", href: "/agents" },
-  { label: "נכסים", href: "/pricing" },
+  { label: "מצא מתווך", href: "/agents" },
   { label: "על הפלטפורמה", href: "/about" },
   { label: "בלוג", href: "/blog" },
 ];

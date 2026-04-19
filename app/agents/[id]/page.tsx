@@ -176,7 +176,7 @@ export default function AgentProfilePage({
     notFound();
   }
 
-  const dealLabel: Record<string, string> = { sale: "מכירה", rent: "השכרה", commercial: "מסחרי" };
+  const dealLabel: Record<string, string> = { sale: "מכירה", buy: "קנייה", rent: "השכרה", commercial: "השכרת נכס מסחרי" };
 
   const tabs: { key: Tab; label: string; count?: number }[] = [
     { key: "about", label: "אודות" },
@@ -197,10 +197,9 @@ export default function AgentProfilePage({
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm">
             {[
-              { label: "מתווכים", href: "/agents" },
-              { label: "נכסים", href: "#" },
-              { label: "על הפלטפורמה", href: "#" },
-              { label: "בלוג", href: "#" },
+              { label: "מצא מתווך", href: "/agents" },
+              { label: "על הפלטפורמה", href: "/about" },
+              { label: "בלוג", href: "/blog" },
             ].map((item) => (
               <Link key={item.label} href={item.href} className="text-gray-400 hover:text-[#C9A84C] transition-colors duration-200">
                 {item.label}
@@ -266,14 +265,31 @@ export default function AgentProfilePage({
                 </div>
 
                 {/* Tags */}
-                <div className="flex flex-wrap gap-2 mb-5">
+                <div className="flex flex-wrap gap-2 mb-3">
                   {agent.tags.map((tag) => (
                     <span key={tag} className="text-xs px-3 py-1 rounded-full bg-[#C9A84C]/10 text-[#C9A84C] border border-[#C9A84C]/20">
                       {tag}
                     </span>
                   ))}
+                </div>
+
+                {/* Property types */}
+                <div className="mb-2">
+                  <span className="text-gray-500 text-xs ml-2">סוגי נכסים:</span>
+                  <div className="inline-flex flex-wrap gap-1.5">
+                    {agent.propertyTypes.map((pt) => (
+                      <span key={pt} className="text-xs px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20">
+                        {pt}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Deal types */}
+                <div className="flex flex-wrap items-center gap-1.5 mb-5">
+                  <span className="text-gray-500 text-xs ml-2">סוגי עסקאות:</span>
                   {agent.dealTypes.map((dt) => (
-                    <span key={dt} className="text-xs px-3 py-1 rounded-full bg-[#2A2A2A] text-gray-400">
+                    <span key={dt} className="text-xs px-2.5 py-0.5 rounded-full bg-[#2A2A2A] text-gray-400">
                       {dealLabel[dt]}
                     </span>
                   ))}
@@ -389,6 +405,19 @@ export default function AgentProfilePage({
                       <div className="text-white text-sm font-medium" dir={item.dir}>{item.value}</div>
                     </div>
                   ))}
+                </div>
+
+                {/* Property types */}
+                <div>
+                  <h3 className="text-white font-semibold text-sm mb-3">סוגי נכסים</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {agent.propertyTypes.map((pt) => (
+                      <div key={pt} className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-blue-500/20 bg-blue-500/5">
+                        <div className="w-2 h-2 rounded-full bg-blue-400" />
+                        <span className="text-blue-300 text-sm">{pt}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Deal types */}
