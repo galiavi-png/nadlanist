@@ -7,9 +7,9 @@ import { useAuth } from "@/app/context/AuthContext";
 
 const NAV_LINKS = [
   { label: "מתווכים", href: "/agents" },
-  { label: "נכסים", href: "#" },
-  { label: "על הפלטפורמה", href: "#" },
-  { label: "בלוג", href: "#" },
+  { label: "נכסים", href: "/pricing" },
+  { label: "על הפלטפורמה", href: "/about" },
+  { label: "בלוג", href: "/blog" },
 ];
 
 export default function Header() {
@@ -155,10 +155,10 @@ export default function Header() {
                 כניסה
               </Link>
               <Link
-                href="/register"
+                href="/pricing"
                 className="text-sm px-4 py-2 rounded border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-200 font-medium"
               >
-                הצטרפו
+                הצטרפו כמתווכ/ת
               </Link>
             </>
           )}
