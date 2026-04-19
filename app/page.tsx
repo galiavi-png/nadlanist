@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/app/components/Header";
 import { useAuth } from "@/app/context/AuthContext";
@@ -59,24 +59,36 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export default function Home() {
-  const [searchCity, setSearchCity] = useState("");
-  const [showWelcome, setShowWelcome] = useState(false);
-  const { user } = useAuth();
+function WelcomeHandler({ onShow }: { onShow: () => void }) {
   const searchParams = useSearchParams();
 
   useEffect(() => {
     if (searchParams.get("welcome") === "true") {
-      setShowWelcome(true);
-      const t = setTimeout(() => setShowWelcome(false), 5000);
-      // clean up the query param from URL without navigation
+      onShow();
       window.history.replaceState({}, "", "/");
+    }
+  }, [searchParams, onShow]);
+
+  return null;
+}
+
+export default function Home() {
+  const [searchCity, setSearchCity] = useState("");
+  const [showWelcome, setShowWelcome] = useState(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (showWelcome) {
+      const t = setTimeout(() => setShowWelcome(false), 5000);
       return () => clearTimeout(t);
     }
-  }, [searchParams]);
+  }, [showWelcome]);
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0D0D0D]">
+      <Suspense fallback={null}>
+        <WelcomeHandler onShow={() => setShowWelcome(true)} />
+      </Suspense>
       <Header />
 
       {/* Welcome banner */}
