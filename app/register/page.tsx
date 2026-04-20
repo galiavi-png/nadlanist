@@ -156,7 +156,7 @@ export default function RegisterPage() {
 
     // If session exists → email confirmation is disabled, user is logged in immediately
     if (data.session) {
-      router.push("/?welcome=true");
+      router.push("/dashboard");
       router.refresh();
       return;
     }

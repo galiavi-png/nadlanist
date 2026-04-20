@@ -191,10 +191,10 @@ export default function AgentsPage() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <a href="#" className="hidden md:block text-sm text-gray-400 hover:text-white transition-colors">כניסה</a>
-            <a href="#" className="text-sm px-4 py-2 rounded border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-200 font-medium">
+            <Link href="/login" className="hidden md:block text-sm text-gray-400 hover:text-white transition-colors">כניסה</Link>
+            <Link href="/register" className="text-sm px-4 py-2 rounded border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-200 font-medium">
               הצטרפו כמתווכ/ת
-            </a>
+            </Link>
           </div>
         </div>
       </header>

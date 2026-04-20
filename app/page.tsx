@@ -326,15 +326,15 @@ export default function Home() {
             <p className="text-gray-400 mb-8 max-w-lg mx-auto">
               קבלו חשיפה לאלפי לקוחות פוטנציאליים, נהלו את הלידים שלכם ובנו מוניטין דיגיטלי חזק.
             </p>
-            <a
-              href="#"
+            <Link
+              href="/register"
               className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-[#C9A84C] text-black font-semibold hover:bg-[#E8C96A] transition-colors text-sm"
             >
               התחילו בחינם
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
               </svg>
-            </a>
+            </Link>
           </div>
         </section>
       </main>

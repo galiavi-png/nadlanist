@@ -154,7 +154,7 @@ export default function Header() {
                 כניסה למתווכים
               </Link>
               <Link
-                href="/pricing"
+                href="/register"
                 className="text-sm px-4 py-2 rounded border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-200 font-medium"
               >
                 הצטרפו כמתווכ/ת
