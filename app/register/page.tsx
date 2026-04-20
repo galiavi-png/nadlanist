@@ -40,7 +40,7 @@ const DEAL_TYPES_OPTIONS = [
   "מכירה", "קנייה", "השכרה", "השכרת נכס מסחרי",
 ];
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2;
 
 function PasswordStrength({ password }: { password: string }) {
   const checks = [
@@ -77,7 +77,7 @@ export default function RegisterPage() {
   const [checkEmail, setCheckEmail] = useState(false); // show "check your email" screen
 
   const [step, setStep] = useState<Step>(1);
-  const [role, setRole] = useState<UserRole | null>(null);
+  const role: UserRole = "agent";
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -93,7 +93,7 @@ export default function RegisterPage() {
   const [selectedDealTypes, setSelectedDealTypes] = useState<string[]>([]);
   const [agreeTerms, setAgreeTerms] = useState(false);
 
-  function validateStep2() {
+  function validateStep1() {
     const errs: Record<string, string> = {};
     if (!name.trim() || name.trim().split(" ").length < 2) errs.name = "הזינו שם פרטי ושם משפחה";
     if (!email.includes("@")) errs.email = "כתובת אימייל לא תקינה";
@@ -102,32 +102,25 @@ export default function RegisterPage() {
     return errs;
   }
 
-  function validateStep3() {
+  function validateStep2() {
     const errs: Record<string, string> = {};
-    if (role === "agent") {
-      if (selectedAreas.length === 0) errs.areas = "בחרו לפחות אזור פעילות אחד";
-      if (!specialty) errs.specialty = "בחרו התמחות";
-    }
+    if (selectedAreas.length === 0) errs.areas = "בחרו לפחות אזור פעילות אחד";
+    if (!specialty) errs.specialty = "בחרו התמחות";
     if (!agreeTerms) errs.terms = "יש לאשר את תנאי השימוש";
     return errs;
   }
 
-  function handleNextFromStep1(r: UserRole) {
-    setRole(r);
-    setStep(2);
-  }
-
-  function handleNextFromStep2(e: React.FormEvent) {
+  function handleNextFromStep1(e: React.FormEvent) {
     e.preventDefault();
-    const errs = validateStep2();
+    const errs = validateStep1();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
-    setStep(3);
+    setStep(2);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const errs = validateStep3();
+    const errs = validateStep2();
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setErrors({});
     setServerError("");
@@ -193,9 +186,8 @@ export default function RegisterPage() {
   }
 
   const stepTitles: Record<Step, string> = {
-    1: "בחרו את סוג החשבון",
-    2: "פרטים אישיים",
-    3: role === "agent" ? "פרטי מתווך" : "סיום הרשמה",
+    1: "פרטים אישיים",
+    2: "פרטי מתווך",
   };
 
   // ── "Check your email" screen ──
@@ -267,7 +259,7 @@ export default function RegisterPage() {
             {/* Progress */}
             <div className="mb-8">
               <div className="flex items-center justify-between mb-3">
-                {([1, 2, 3] as Step[]).map((s, i) => (
+                {([1, 2] as Step[]).map((s, i) => (
                   <div key={s} className="flex items-center flex-1">
                     <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                       step > s
@@ -282,90 +274,19 @@ export default function RegisterPage() {
                         </svg>
                       ) : s}
                     </div>
-                    {i < 2 && (
+                    {i < 1 && (
                       <div className={`flex-1 h-px mx-2 transition-all ${step > s ? "bg-[#C9A84C]" : "bg-[#2A2A2A]"}`} />
                     )}
                   </div>
                 ))}
               </div>
               <h1 className="text-2xl font-bold text-white">{stepTitles[step]}</h1>
-              <p className="text-gray-500 text-sm mt-1">שלב {step} מתוך 3</p>
+              <p className="text-gray-500 text-sm mt-1">שלב {step} מתוך 2</p>
             </div>
 
-            {/* ── STEP 1: Role selection ── */}
+            {/* ── STEP 1: Personal details ── */}
             {step === 1 && (
-              <div className="space-y-4">
-                {[
-                  {
-                    role: "owner" as UserRole,
-                    title: "בעל נכס",
-                    desc: "אני מחפש/ת לקנות, למכור או להשכיר נכס",
-                    icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
-                    perks: ["גישה לאלפי מתווכים", "השוואת הצעות", "ביקורות מאומתות"],
-                  },
-                  {
-                    role: "agent" as UserRole,
-                    title: "מתווך נדל\"ן",
-                    desc: "אני מתווך/ת ורוצה לפרסם את השירותים שלי",
-                    icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
-                    perks: ["פרופיל מקצועי", "חשיפה ללקוחות", "ניהול לידים"],
-                  },
-                ].map((opt) => (
-                  <button
-                    key={opt.role}
-                    onClick={() => handleNextFromStep1(opt.role)}
-                    className="w-full rounded-2xl border border-[#2A2A2A] bg-[#161616] p-6 text-right hover:border-[#C9A84C]/50 hover:bg-[#1A1500] transition-all group"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-[#C9A84C]/10 border border-[#C9A84C]/20 flex items-center justify-center flex-shrink-0 group-hover:bg-[#C9A84C]/20 transition-colors">
-                        <svg className="w-6 h-6 text-[#C9A84C]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={opt.icon} />
-                        </svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <h3 className="text-white font-semibold text-lg">{opt.title}</h3>
-                          <svg className="w-5 h-5 text-gray-600 group-hover:text-[#C9A84C] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 17l9.2-9.2M17 17V7H7" />
-                          </svg>
-                        </div>
-                        <p className="text-gray-400 text-sm mb-3">{opt.desc}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {opt.perks.map((p) => (
-                            <span key={p} className="text-xs px-2.5 py-1 rounded-full bg-[#2A2A2A] text-gray-400">
-                              ✓ {p}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-
-                <p className="text-center text-sm text-gray-500 pt-2">
-                  כבר רשומים?{" "}
-                  <Link href="/login" className="text-[#C9A84C] hover:text-[#E8C96A] transition-colors">
-                    כניסה לחשבון
-                  </Link>
-                </p>
-              </div>
-            )}
-
-            {/* ── STEP 2: Personal details ── */}
-            {step === 2 && (
-              <form onSubmit={handleNextFromStep2} className="rounded-2xl border border-[#2A2A2A] bg-[#161616] p-8 space-y-5">
-                {/* Role badge */}
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#C9A84C]/8 border border-[#C9A84C]/20 w-fit">
-                  <div className="w-2 h-2 rounded-full bg-[#C9A84C]" />
-                  <span className="text-[#C9A84C] text-xs font-medium">
-                    {role === "agent" ? "מתווך נדל\"ן" : "בעל נכס"}
-                  </span>
-                  <button type="button" onClick={() => setStep(1)} className="text-gray-600 hover:text-gray-400 mr-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                    </svg>
-                  </button>
-                </div>
+              <form onSubmit={handleNextFromStep1} className="rounded-2xl border border-[#2A2A2A] bg-[#161616] p-8 space-y-5">
 
                 {/* Name */}
                 <div>
@@ -436,11 +357,18 @@ export default function RegisterPage() {
                 <button type="submit" className="w-full py-3.5 rounded-lg bg-[#C9A84C] hover:bg-[#E8C96A] text-black font-semibold transition-colors">
                   המשך
                 </button>
+
+                <p className="text-center text-sm text-gray-500">
+                  כבר רשומים?{" "}
+                  <Link href="/login" className="text-[#C9A84C] hover:text-[#E8C96A] transition-colors">
+                    כניסה לחשבון
+                  </Link>
+                </p>
               </form>
             )}
 
-            {/* ── STEP 3: Agent details / confirmation ── */}
-            {step === 3 && (
+            {/* ── STEP 2: Agent details / confirmation ── */}
+            {step === 2 && (
               <form onSubmit={handleSubmit} className="rounded-2xl border border-[#2A2A2A] bg-[#161616] p-8 space-y-6">
                 {serverError && (
                   <div className="flex items-center gap-2.5 px-4 py-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
@@ -450,8 +378,7 @@ export default function RegisterPage() {
                     {serverError}
                   </div>
                 )}
-                {role === "agent" && (
-                  <>
+                <>
                     {/* Areas */}
                     <div>
                       <label className="block text-gray-400 text-xs mb-2">
@@ -563,7 +490,6 @@ export default function RegisterPage() {
 
                     <div className="h-px bg-[#2A2A2A]" />
                   </>
-                )}
 
                 {/* Summary */}
                 <div className="rounded-xl bg-[#0D0D0D] border border-[#2A2A2A] p-4 space-y-2">
@@ -572,11 +498,10 @@ export default function RegisterPage() {
                     { label: "שם", value: name },
                     { label: "אימייל", value: email },
                     { label: "טלפון", value: phone },
-                    { label: "סוג חשבון", value: role === "agent" ? "מתווך נדל\"ן" : "בעל נכס" },
-                    ...(role === "agent" && specialty ? [{ label: "התמחות", value: specialty }] : []),
-                    ...(role === "agent" && selectedAreas.length ? [{ label: "אזורים", value: selectedAreas.join("، ") }] : []),
-                    ...(role === "agent" && selectedPropertyTypes.length ? [{ label: "סוגי נכסים", value: selectedPropertyTypes.join("، ") }] : []),
-                    ...(role === "agent" && selectedDealTypes.length ? [{ label: "סוגי עסקאות", value: selectedDealTypes.join("، ") }] : []),
+                    ...(specialty ? [{ label: "התמחות", value: specialty }] : []),
+                    ...(selectedAreas.length ? [{ label: "אזורים", value: selectedAreas.join("، ") }] : []),
+                    ...(selectedPropertyTypes.length ? [{ label: "סוגי נכסים", value: selectedPropertyTypes.join("، ") }] : []),
+                    ...(selectedDealTypes.length ? [{ label: "סוגי עסקאות", value: selectedDealTypes.join("، ") }] : []),
                   ].map((row) => (
                     <div key={row.label} className="flex justify-between text-sm">
                       <span className="text-gray-500">{row.label}</span>
@@ -614,7 +539,7 @@ export default function RegisterPage() {
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    onClick={() => setStep(2)}
+                    onClick={() => setStep(1)}
                     className="px-5 py-3.5 rounded-lg border border-[#2A2A2A] text-gray-400 hover:text-white hover:border-gray-500 transition-colors text-sm"
                   >
                     חזרה
