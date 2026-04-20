@@ -10,6 +10,16 @@ export interface Profile {
   created_at: string;
 }
 
+export interface Lead {
+  id: string;
+  agent_id: number;
+  name: string;
+  phone: string;
+  email: string;
+  message: string;
+  created_at: string;
+}
+
 export interface Database {
   public: {
     Tables: {
@@ -25,6 +35,18 @@ export interface Database {
           created_at?: string;
         };
         Update: Partial<Omit<Profile, "id">>;
+      };
+      leads: {
+        Row: Lead;
+        Insert: {
+          agent_id: number;
+          name: string;
+          phone: string;
+          email: string;
+          message: string;
+          created_at?: string;
+        };
+        Update: Partial<Omit<Lead, "id">>;
       };
     };
   };

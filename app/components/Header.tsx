@@ -151,7 +151,7 @@ export default function Header() {
                 href="/login"
                 className="hidden md:block text-sm text-gray-400 hover:text-white transition-colors"
               >
-                כניסה
+                כניסה למתווכים
               </Link>
               <Link
                 href="/pricing"

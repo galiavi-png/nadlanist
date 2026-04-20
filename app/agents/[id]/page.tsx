@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { getAgentById } from "@/app/lib/agents";
 import type { Property } from "@/app/lib/agents";
 import ReviewsTab from "./ReviewsTab";
+import { createClient } from "@/app/lib/supabase/client";
 
 type Tab = "about" | "properties" | "reviews";
 
@@ -68,18 +69,30 @@ function PropertyCard({ property }: { property: Property }) {
   );
 }
 
-function ContactForm({ agentName }: { agentName: string }) {
-  const [form, setForm] = useState({ name: "", phone: "", message: "" });
+function ContactForm({ agentName, agentId }: { agentName: string; agentId: number }) {
+  const [form, setForm] = useState({ name: "", phone: "", email: "", message: "" });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+    const supabase = createClient();
+    const { error: dbError } = await supabase.from("leads").insert({
+      agent_id: agentId,
+      name: form.name,
+      phone: form.phone,
+      email: form.email,
+      message: form.message,
+    });
+    setLoading(false);
+    if (dbError) {
+      setError("אירעה שגיאה בשליחה. נסו שוב.");
+    } else {
       setSent(true);
-    }, 1200);
+    }
   };
 
   if (sent) {
@@ -92,7 +105,7 @@ function ContactForm({ agentName }: { agentName: string }) {
         </div>
         <p className="text-white font-semibold mb-1">ההודעה נשלחה!</p>
         <p className="text-gray-400 text-sm">{agentName} יחזור אליכם בהקדם</p>
-        <button onClick={() => setSent(false)} className="mt-4 text-xs text-gray-500 hover:text-[#C9A84C] transition-colors">
+        <button onClick={() => { setSent(false); setForm({ name: "", phone: "", email: "", message: "" }); }} className="mt-4 text-xs text-gray-500 hover:text-[#C9A84C] transition-colors">
           שלחו הודעה נוספת
         </button>
       </div>
@@ -125,6 +138,18 @@ function ContactForm({ agentName }: { agentName: string }) {
         />
       </div>
       <div>
+        <label className="block text-gray-400 text-xs mb-1.5">אימייל</label>
+        <input
+          type="email"
+          required
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
+          placeholder="israel@example.com"
+          className="w-full bg-[#0D0D0D] border border-[#2A2A2A] rounded-lg px-4 py-3 text-white text-sm placeholder-gray-600 outline-none focus:border-[#C9A84C]/50 transition-colors"
+          dir="ltr"
+        />
+      </div>
+      <div>
         <label className="block text-gray-400 text-xs mb-1.5">הודעה</label>
         <textarea
           required
@@ -135,6 +160,7 @@ function ContactForm({ agentName }: { agentName: string }) {
           className="w-full bg-[#0D0D0D] border border-[#2A2A2A] rounded-lg px-4 py-3 text-white text-sm placeholder-gray-600 outline-none focus:border-[#C9A84C]/50 transition-colors resize-none"
         />
       </div>
+      {error && <p className="text-red-400 text-xs text-center">{error}</p>}
       <button
         type="submit"
         disabled={loading}
@@ -207,8 +233,8 @@ export default function AgentProfilePage({
             ))}
           </nav>
           <div className="flex items-center gap-3">
-            <a href="#" className="hidden md:block text-sm text-gray-400 hover:text-white transition-colors">כניסה</a>
-            <a href="#" className="text-sm px-4 py-2 rounded border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-200 font-medium">
+            <a href="/login" className="hidden md:block text-sm text-gray-400 hover:text-white transition-colors">כניסה למתווכים</a>
+            <a href="/pricing" className="text-sm px-4 py-2 rounded border border-[#C9A84C] text-[#C9A84C] hover:bg-[#C9A84C] hover:text-black transition-all duration-200 font-medium">
               הצטרפו כמתווכ/ת
             </a>
           </div>
@@ -492,7 +518,7 @@ export default function AgentProfilePage({
               </div>
 
               <div className="p-5">
-                <ContactForm agentName={agent.name} />
+                <ContactForm agentName={agent.name} agentId={agent.id} />
               </div>
 
               {/* Direct contact */}
